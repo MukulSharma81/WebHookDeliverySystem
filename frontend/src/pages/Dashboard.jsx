@@ -20,7 +20,6 @@ import StatusBadge from "../components/StatusBadge";
 import { fetchAllWebhooks } from "../services/api";
 
 const PIE_COLORS = ["#10b981", "#ef4444", "#f59e0b"];
-
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload?.length) {
     return (

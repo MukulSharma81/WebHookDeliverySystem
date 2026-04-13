@@ -7,6 +7,7 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import indexRouter from "./routes/index.js";
 import webhookRoutes from "./routes/webhookRoutes.js";
+import settingRoutes from "./routes/settingRoutes.js";
 import logger from "./utils/logger.js";
 
 const app = express();
@@ -31,6 +32,7 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
 // ──────────────────────────────────────────────
 app.use("/", indexRouter);
 app.use("/api/webhooks", webhookRoutes);
+app.use("/api/settings", settingRoutes);
 
 // 404 Handler — catch undefined routes
 app.use((req, res) => {

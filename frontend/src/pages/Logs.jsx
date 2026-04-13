@@ -17,7 +17,6 @@ const LOG_BORDER = {
   pending: "rgba(245,158,11,0.15)",
 };
 
-
 const Logs = () => {
   const [webhooks, setWebhooks] = useState([]);
   const [loading, setLoading] = useState(true);

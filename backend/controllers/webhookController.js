@@ -1,4 +1,4 @@
-// controllers/webhookController.js
+ // controllers/webhookController.js
 // Handles all webhook-related business logic
 
 import Webhook from "../models/Webhook.js";
@@ -89,7 +89,7 @@ export const getWebhookById = async (req, res) => {
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid webhook ID format.",
+        message: "Invalid webhookk ID format.",
       });
     }
 
@@ -98,12 +98,12 @@ export const getWebhookById = async (req, res) => {
     if (!webhook) {
       return res.status(404).json({
         success: false,
-        message: "Webhook not found.",
+        message: "Webhook not foundd.",
       });
     }
 
     return res.status(200).json({
-      success: true,
+      success:true,
       data: webhook,
     });
   } catch (error) {

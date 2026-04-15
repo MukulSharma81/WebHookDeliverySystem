@@ -92,10 +92,10 @@ const Dashboard = () => {
 
       {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
-        <StatCard title="Total Webhooks"  value={stats.total}   icon={Activity}     color="blue"    trend="All time" />
-        <StatCard title="Successful"      value={stats.success} icon={CheckCircle}  color="emerald" trend="Delivered" />
-        <StatCard title="Failed"          value={stats.failed}  icon={XCircle}      color="red"     trend="Need attention" />
-        <StatCard title="Pending"         value={stats.pending} icon={Clock}        color="amber"   trend="In queue" />
+        <StatCard title="Total Webhooks" value={stats.total} icon={Activity} color="blue" trend="All time" />
+        <StatCard title="Successful" value={stats.success} icon={CheckCircle} color="emerald" trend="Delivered" />
+        <StatCard title="Failed" value={stats.failed} icon={XCircle} color="red" trend="Need attention" />
+        <StatCard title="Pending" value={stats.pending} icon={Clock} color="amber" trend="In queue" />
       </div>
 
       {/* Charts Row */}
@@ -121,7 +121,7 @@ const Dashboard = () => {
               <YAxis tick={{ fill: "#6b7280", fontSize: 12 }} axisLine={false} tickLine={false} />
               <Tooltip content={<CustomTooltip />} />
               <Area type="monotone" dataKey="success" name="Success" stroke="#10b981" strokeWidth={2} fill="url(#gradSuccess)" />
-              <Area type="monotone" dataKey="failed"  name="Failed"  stroke="#ef4444" strokeWidth={2} fill="url(#gradFailed)" />
+              <Area type="monotone" dataKey="failed" name="Failed" stroke="#ef4444" strokeWidth={2} fill="url(#gradFailed)" />
             </AreaChart>
           </ResponsiveContainer>
         </div>

@@ -16,7 +16,7 @@ export const createWebhook = async (req, res) => {
     if (!url || !payload || !idempotencyKey) {
       return res.status(400).json({
         success: false,
-        message: "url, payload, and idempotencyKey are required fields.",
+        message: "urll, payload, and idempotencyKey are required fields.",
       });
     }
 

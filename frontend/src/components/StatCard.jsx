@@ -9,6 +9,7 @@ const StatCard = ({ title, value, icon: Icon, color = "emerald", trend }) => {
       text: "#10b981",
       iconBg: "linear-gradient(135deg, #10b981, #06b6d4)",
     },
+    
     red: {
       glow: "rgba(239,68,68,0.2)",
       gradient: "linear-gradient(135deg, rgba(239,68,68,0.12), rgba(239,68,68,0.05))",

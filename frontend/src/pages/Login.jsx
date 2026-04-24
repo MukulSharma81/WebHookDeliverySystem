@@ -112,7 +112,7 @@ const Login = () => {
               </div>
             )}
 
-            {/* Submit */}
+            {/* Submit Button */}
             <button
               id="login-btn"
               type="submit"
@@ -131,7 +131,7 @@ const Login = () => {
             </button>
           </form>
 
-          {/* Footer hint */}
+          {/* Footer*/}
           <p className="text-center text-gray-600 text-xs mt-6">
             Demo credentials: any email + any password
           </p>

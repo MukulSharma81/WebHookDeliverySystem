@@ -1,5 +1,4 @@
 // src/pages/WebhookList.jsx
-
 import { useEffect, useState } from "react";
 import { Search, Plus, RefreshCw, ExternalLink, Copy, Check } from "lucide-react";
 import StatusBadge from "../components/StatusBadge";

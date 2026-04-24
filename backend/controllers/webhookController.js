@@ -78,7 +78,7 @@ export const getAllWebhooks = async (req, res) => {
 };
 
 // ──────────────────────────────────────────────
-// GET /api/webhooks/:id
+// GET /api/webhooks/:id made some chnages here
 // Return a single webhook by MongoDB ID
 // ──────────────────────────────────────────────
 export const getWebhookById = async (req, res) => {

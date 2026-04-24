@@ -1,4 +1,6 @@
 // src/pages/Login.jsx
+// Standard login page for system authentication
+
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";

@@ -7,7 +7,7 @@ import logger from "../utils/logger.js";
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s for better resilience
     });
 
     logger.info(`MongoDB Connected: ${conn.connection.host}`);

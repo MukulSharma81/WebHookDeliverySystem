@@ -8,6 +8,7 @@ const dots = {
 
 const StatusBadge = ({ status }) => {
   const s = status?.toLowerCase();
+  
 
   const badgeClass =
     s === "success" ? "badge-success" :

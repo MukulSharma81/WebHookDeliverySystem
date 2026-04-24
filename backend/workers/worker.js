@@ -3,20 +3,14 @@
 
 import axios from "axios";
 import Webhook from "../models/Webhook.js";
+import Setting from "../models/Setting.js";
 import logger from "../utils/logger.js";
 
-// ──────────────────────────────────────────────
-// Configuration
-// ──────────────────────────────────────────────
-const MAX_RETRIES = 3;             // Max delivery attempts
-const POLL_INTERVAL_MS = 10_000;  // Poll every 10 seconds
-
-// Exponential backoff delays (in ms) indexed by retryCount
-// retryCount 1 → 1 min, 2 → 2 min, 3 → 5 min
-const RETRY_DELAYS_MS = {
-  1: 1 * 60 * 1000,   // 60,000 ms  → 1 minute
-  2: 2 * 60 * 1000,   // 120,000 ms → 2 minutes
-  3: 5 * 60 * 1000,   // 300,000 ms → 5 minutes
+// Runtime configuration (updated dynamically)
+let CONFIG = {
+  maxRetries: 3,
+  pollIntervalMs: 10000,
+  signingSecret: "whsec_..."
 };
 
 // ──────────────────────────────────────────────
@@ -37,6 +31,7 @@ const deliverWebhook = async (webhook) => {
         "Content-Type": "application/json",
         "X-Webhook-Id": webhook._id.toString(),
         "X-Idempotency-Key": webhook.idempotencyKey,
+        "X-Webhook-Signature": CONFIG.signingSecret, // Added signing signature
       },
     });
 
@@ -54,7 +49,7 @@ const deliverWebhook = async (webhook) => {
   } catch (error) {
     const newRetryCount = webhook.retryCount + 1;
 
-    if (newRetryCount >= MAX_RETRIES) {
+    if (newRetryCount >= CONFIG.maxRetries) {
       // ❌ Max retries reached — permanently mark as failed
       await Webhook.findByIdAndUpdate(webhook._id, {
         status: "failed",
@@ -69,8 +64,8 @@ const deliverWebhook = async (webhook) => {
       });
 
     } else {
-      // 🔄 Schedule next retry using exponential backoff
-      const delayMs = RETRY_DELAYS_MS[newRetryCount] || 60_000;
+      // 🔄 Schedule next retry using exponential backoff (2^retryCount minutes)
+      const delayMs = Math.pow(2, newRetryCount) * 60 * 1000;
       const nextRetryAt = new Date(Date.now() + delayMs);
 
       await Webhook.findByIdAndUpdate(webhook._id, {
@@ -95,11 +90,18 @@ const deliverWebhook = async (webhook) => {
 // ──────────────────────────────────────────────
 const processPendingWebhooks = async () => {
   try {
+    // 1. Refresh Dynamic Configuration from DB
+    const settings = await Setting.getSingleton();
+    CONFIG = {
+      maxRetries: settings.maxRetries,
+      pollIntervalMs: settings.pollIntervalMs,
+      signingSecret: settings.signingSecret,
+    };
+
     const now = new Date();
 
     // Fetch webhooks that are:
-    //   - status = "pending"
-    //   - AND (nextRetryAt is null OR nextRetryAt <= now)
+    // status = "pending" AND (nextRetryAt is null OR nextRetryAt <= now)
     const pendingWebhooks = await Webhook.find({
       status: "pending",
       $or: [
@@ -108,18 +110,16 @@ const processPendingWebhooks = async () => {
       ],
     });
 
-    if (pendingWebhooks.length === 0) {
-      logger.debug("[Worker] No pending webhooks to process.");
-      return;
+    if (pendingWebhooks.length > 0) {
+      logger.info(`[Worker] Found ${pendingWebhooks.length} pending webhook(s). Processing...`);
+      await Promise.allSettled(pendingWebhooks.map(deliverWebhook));
     }
-
-    logger.info(`[Worker] Found ${pendingWebhooks.length} pending webhook(s). Processing...`);
-
-    // Process all pending webhooks concurrently
-    await Promise.allSettled(pendingWebhooks.map(deliverWebhook));
 
   } catch (error) {
     logger.error("[Worker] Error during polling cycle", { message: error.message });
+  } finally {
+    // Schedule next run based on dynamic interval
+    setTimeout(processPendingWebhooks, CONFIG.pollIntervalMs);
   }
 };
 
@@ -127,9 +127,8 @@ const processPendingWebhooks = async () => {
 // Start the worker polling loop
 // ──────────────────────────────────────────────
 export const startWorker = () => {
-  logger.info(`[Worker] 🚀 Started — polling every ${POLL_INTERVAL_MS / 1000}s`);
-
-  // Run immediately on start, then on each interval
+  logger.info(`[Worker] 🚀 Started with Dynamic Configuration`);
+  
+  // Start the recursive timeout loop
   processPendingWebhooks();
-  setInterval(processPendingWebhooks, POLL_INTERVAL_MS);
 };

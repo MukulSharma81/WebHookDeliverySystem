@@ -54,4 +54,4 @@ const webhookSchema = new mongoose.Schema(
 
 const Webhook = mongoose.model("Webhook", webhookSchema);
 
-export default Webhook;
+export default Webhook
